@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "exon"
+authors = [
+  { name="Yohan Lanier", email="yohan.lanier@cnrs.fr" },
+]
+version = "0.1.0"
+requires-python = ">=3.12"
+readme = "README.md"
+dynamic = ["dependencies"]
+
+[tool.setuptools.packages.find]
+exclude = ["data"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
