@@ -23,11 +23,14 @@ Note: I did not separate dev and non dev dependencies so packages like black, my
 
 The code uses data from two main sources to run:
 #### Exiobase
+Exiobase archives can be downloaded from [Exiobase Zenodo](https://zenodo.org/records/18937492). Latest version to date is 3.10.1 released in march 2026. Version 3.8.2 and 3.10.1 are the only version explicitly supported in `exon`. The code can easily be extended to use other versions.
+
+The code works with `pxp` versions of exiobase. Download the `zip` archive and place it in `./data/databases/exiobase/{$version}/IOT_{$ref-year}_pxp.zip` where `$version` & `$ref-year` should correspond to the version downloaded.
 
 #### Impact World+
-IWP files for exiobase can be downloaded from [Zenodo](https://zenodo.org/records/18892673), latest version to date is 2.2.1 which is the only explicitly supported in `exon`. But code can easily be extended to use other versions (or LCIA method providing CF for exiobase elementary flows are available).
+IWP files for exiobase can be downloaded from [IWP Zenodo](https://zenodo.org/records/18892673), latest version to date is 2.2.1 released in march 2026 which is the only explicitly supported in `exon`. The code can easily be extended to use other versions (or LCIA method providing CF for exiobase elementary flows are available).
 
-Files (impact_world_plus_2.2.1_expert_version_exiobase_3.8.2_and_before.xlsx ; impact_world_plus_2.2.1_expert_version_exiobase_3.9_and_after.xlsx)
+Files (`impact_world_plus_2.2.1_expert_version_exiobase_3.8.2_and_before.xlsx` ; `impact_world_plus_2.2.1_expert_version_exiobase_3.9_and_after.xlsx`) should be placed in `./data/lcia_methods/iwp/2.2.1`.
 
 ### Usage
 
