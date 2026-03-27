@@ -17,3 +17,7 @@ exclude = ["data"]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
+
+[[tool.mypy.overrides]]
+module = ["bw2data.*", "pymrio.*"]
+ignore_missing_imports = true
