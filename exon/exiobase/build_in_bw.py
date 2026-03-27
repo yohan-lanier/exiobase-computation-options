@@ -24,6 +24,19 @@ def build_exiobase_in_bw(
     reference_year: str,
     culling_thresholds: List[float],
 ) -> None:
+    exiobase_technosphere_names = [
+        f"{EXIOBASE_NAME}-{version}-{reference_year}-{culling_threshold}"
+        for culling_threshold in culling_thresholds
+    ]
+    if any(name in bd.databases for name in exiobase_technosphere_names):
+        logging.error(
+            "Exiobase databases already exist in your project"
+            " for version %s and reference year %s. If you wish to overwrite,"
+            "delete them manually and relaunch code.",
+            version,
+            reference_year,
+        )
+
     if Version(version) >= Version("3.9"):
         exiobase_biosphere_name = f"{EXIOBASE_NAME}-3.9-and-more-biosphere"
     else:
@@ -119,10 +132,6 @@ def build_exiobase_technospheres(
         )
         exiobase_technosphere_name = (
             exiobase_technosphere_base_name + f"-{culling_threshold}"
-        )
-        assert exiobase_technosphere_name not in bd.databases, (
-            "Database %s already exists in your brightway project, please delete manually and retry import",
-            exiobase_technosphere_name,
         )
         technosphere_mapping = get_initial_exiobase_technosphere_data(
             a_matrix, exiobase_technosphere_name

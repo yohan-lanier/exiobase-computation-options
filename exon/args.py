@@ -8,6 +8,7 @@ class ExonParser(Tap):
     database: str
     method: str
     culling_thresholds: list[float]
+    steps: list[str]
 
     def configure(self) -> None:
         self.add_argument(
@@ -42,4 +43,13 @@ class ExonParser(Tap):
             dest="culling_thresholds",
             default=[1e-15],
             nargs="+",
+        )
+
+        self.add_argument(
+            "-s",
+            "--steps",
+            help="Can be used to only perform some steps of the script.",
+            dest="steps",
+            nargs="*",
+            choices=["all", "extract_only", "extract_and_build", "lcia_methods"],
         )
