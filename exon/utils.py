@@ -62,3 +62,6 @@ class EeioDatabase(TypedDict):
     name: str
     version: str
     reference_year: str
+
+
+MIN_VALUE_CULLING_FOR_LCA_BASE_COMP = 1e-5

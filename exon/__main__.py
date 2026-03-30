@@ -20,6 +20,7 @@ from exon.lcia_methods import (
 from exon.logger import configure_logger
 from exon.paths import DATA, LCIA_METHODS_PATH
 from exon.utils import (
+    MIN_VALUE_CULLING_FOR_LCA_BASE_COMP,
     ResultsLogValue,
     get_biosphere_version,
     get_database_biosphere_name,
@@ -114,6 +115,7 @@ if __name__ == "__main__":
                 random_methods,
                 bw_project,
                 mode="lca_base",
+                min_value_culling_lca_base=MIN_VALUE_CULLING_FOR_LCA_BASE_COMP,
             )
         )
 

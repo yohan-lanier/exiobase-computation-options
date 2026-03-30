@@ -8,8 +8,6 @@ from tqdm import tqdm
 
 from exon.utils import EXIOBASE_NAME, EeioDatabase, ResultsLogValue
 
-MAX_CULLING_FOR_LCA_BASE_COMP = 1e-5
-
 
 def run_bw_computations(
     exiobase_data: EeioDatabase,
@@ -19,6 +17,7 @@ def run_bw_computations(
     bw_project: str,
     mode: Literal["lca_base", "lca_jacobi"] = "lca_base",
     rtol: float = 1e-6,
+    min_value_culling_lca_base: float = 1e-5,
 ) -> List[ResultsLogValue]:
     bd.projects.set_current(bw_project)
     check_all_databases_are_in_bw(exiobase_data, culling_thresholds)
@@ -32,10 +31,7 @@ def run_bw_computations(
         culling_thresholds,
         desc="Running computation for the different exiobase databases",
     ):
-        if (
-            float(culling_threshold) < MAX_CULLING_FOR_LCA_BASE_COMP
-            and mode == "lca_base"
-        ):
+        if float(culling_threshold) < min_value_culling_lca_base and mode == "lca_base":
             logging.warning(
                 "Culling threshold %s is too small for conventional bw "
                 "lca computation on exiobase. Skipping these computations",
