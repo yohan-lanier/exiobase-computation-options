@@ -23,7 +23,9 @@ def build_exiobase_in_bw(
     version: str,
     reference_year: str,
     culling_thresholds: List[float],
+    bw_project: str,
 ) -> None:
+    bd.projects.set_current(bw_project)
     exiobase_technosphere_names = [
         f"{EXIOBASE_NAME}-{version}-{reference_year}-{culling_threshold}"
         for culling_threshold in culling_thresholds
@@ -109,8 +111,9 @@ def build_exiobase_biosphere(
     logging.info("creating exiobase biosphere in brightway[...]")
     biosphere_bw_db.write(exiobase_biosphere)
     return {
-        s["name"]: s["id"] for s in biosphere_bw_db
-    }  # pyright: ignore[reportGeneralTypeIssues]
+        s["name"]: s["id"]
+        for s in biosphere_bw_db  # pyright: ignore[reportGeneralTypeIssues]
+    }
 
 
 def build_exiobase_technospheres(

@@ -3,7 +3,6 @@ from typing import Any, Dict, cast
 
 import bw2data as bd
 import pandas as pd
-from packaging.version import Version
 from tqdm import tqdm
 
 from exon.lcia_methods.constants import (
@@ -12,11 +11,13 @@ from exon.lcia_methods.constants import (
     IWP_NAME,
     IWP_UNIT_TO_AREA_OF_PROTECTION,
 )
-from exon.paths import LCIA_METHODS
+from exon.paths import LCIA_METHODS_PATH
+from exon.utils import get_biosphere_version, get_database_biosphere_name
 
 
-def create_iwp_method_for_exio(version: str) -> None:
-    exiobase_biosphere = get_database_biosphere_name(db_name="exiobase")
+def create_iwp_method_for_exio(version: str, bw_project: str) -> None:
+    bd.projects.set_current(bw_project)
+    exiobase_biosphere = get_database_biosphere_name("exiobase", bw_project)
     biosphere_version = get_biosphere_version(exiobase_biosphere)
     # cfs: characterization factors
     cfs = load_cfs(method_version=version, biosphere_version=biosphere_version)
@@ -29,39 +30,11 @@ def create_iwp_method_for_exio(version: str) -> None:
     )
 
 
-def get_database_biosphere_name(db_name: str) -> str:
-    biospheres = [db for db in bd.databases if db_name in db and "biosphere" in db]
-    if not biospheres:
-        logging.error(
-            "No biospheres found for database %s, cannot import LCIA method", db_name
-        )
-        raise NotImplementedError
-    if len(biospheres) > 1:
-        logging.error(
-            "More than one biosphere found for database %s. "
-            "Please make sure only one biosphere per brightway project for database %s is defined.",
-            db_name,
-            db_name,
-        )
-        raise NotImplementedError
-    logging.info("✅ Found a unique biosphere for database %s", db_name)
-    return biospheres[0]
-
-
-def get_biosphere_version(exiobase_biosphere: str) -> str:
-    # Name is always "db_name-{version}-biosphere"
-    # per construction. Hence version is element one after splitting on "-"
-    # For exiobase, determine if version is lower or equal than 3.8.2
-    if Version(exiobase_biosphere.split("-")[1]) >= Version("3.9"):
-        return "3.9_and_after"
-    return "3.8.2_and_before"
-
-
 def load_cfs(method_version: str, biosphere_version: str) -> pd.Series:
     lcia_exio = cast(
         pd.Series,
         pd.read_excel(
-            LCIA_METHODS
+            LCIA_METHODS_PATH
             / IWP_NAME
             / method_version
             / (

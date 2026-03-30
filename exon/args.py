@@ -51,5 +51,5 @@ class ExonParser(Tap):
             help="Can be used to only perform some steps of the script.",
             dest="steps",
             nargs="*",
-            choices=["all", "extract_only", "extract_and_build", "method"],
+            choices=["all", "extract_only", "build", "method"],
         )
