@@ -1,4 +1,6 @@
 from random import sample
+from time import strftime
+from typing import List
 
 import pandas as pd
 
@@ -16,8 +18,12 @@ from exon.lcia_methods import (
     LCIA_METHODS,
 )
 from exon.logger import configure_logger
-from exon.paths import LCIA_METHODS_PATH
-from exon.utils import get_biosphere_version, get_database_biosphere_name
+from exon.paths import DATA, LCIA_METHODS_PATH
+from exon.utils import (
+    ResultsLogValue,
+    get_biosphere_version,
+    get_database_biosphere_name,
+)
 
 if __name__ == "__main__":
     configure_logger()
@@ -44,7 +50,7 @@ if __name__ == "__main__":
         exiobase_data = extract_exiobase_data(
             exiobase["version"], exiobase["reference_year"]
         )
-        biosphere_version = get_biosphere_version(
+        BIOSPHERE_VERSION = get_biosphere_version(
             get_database_biosphere_name("exiobase", bw_project)
         )
         c_matrix = pd.read_excel(
@@ -55,31 +61,40 @@ if __name__ == "__main__":
                 IWP_EXIOBASE_FILE_PREFIX
                 + method["method_version"]
                 + IWP_EXIOBASE_FILE_MIDDLE
-                + biosphere_version
+                + BIOSPHERE_VERSION
                 + ".xlsx"
             ),
             index_col=0,
         )
         exiobase_data["c"] = c_matrix
-
         activities_list = exiobase_data["a"].index.to_list()
         random_activities = sample(activities_list, int(args.nb_activities))
         random_activities_index = [
             activities_list.index(act) for act in random_activities
         ]
         random_methods = sample(c_matrix.index.to_list(), int(args.nb_indicators))
+        results_log: List[ResultsLogValue] = []
 
-        run_direct_matrix_computation(
-            exiobase_data,
-            activities_list,
-            random_activities_index,
-            random_methods,
-            mode="iterative",
+        results_log.extend(
+            run_direct_matrix_computation(
+                exiobase_data,
+                activities_list,
+                random_activities_index,
+                random_methods,
+                mode="iterative",
+            )
         )
-        run_direct_matrix_computation(
-            exiobase_data,
-            activities_list,
-            random_activities_index,
-            random_methods,
-            mode="aggregated",
+        results_log.extend(
+            run_direct_matrix_computation(
+                exiobase_data,
+                activities_list,
+                random_activities_index,
+                random_methods,
+                mode="aggregated",
+            )
+        )
+
+        # change to use built-in csv module later
+        pd.DataFrame.from_records(results_log).to_csv(
+            DATA / "output" / f"{strftime("%Y%m%d-%H%M%S")}-results_log.csv"
         )

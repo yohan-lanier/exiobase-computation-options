@@ -1,5 +1,5 @@
 import logging
-from typing import NotRequired, TypedDict
+from typing import Literal, NotRequired, TypedDict
 
 import bw2data as bd
 import pandas as pd
@@ -41,3 +41,15 @@ class ExiobaseRelevantData(TypedDict):
     units: pd.DataFrame
     reference_year: str
     c: NotRequired[pd.DataFrame]
+
+
+class ResultsLogValue(TypedDict):
+    computation_type: Literal[
+        "matrix_iterative", "matrix_aggregated", "lca_base", "lca_jacobi"
+    ]
+    activity: str
+    method: str
+    score: float
+    computation_time: float
+    db_name: NotRequired[str]
+    culling_threshold: NotRequired[str]
