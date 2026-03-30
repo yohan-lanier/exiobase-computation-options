@@ -9,6 +9,8 @@ class ExonParser(Tap):
     method: str
     culling_thresholds: list[float]
     steps: list[str]
+    nb_activities: int = 5
+    nb_indicators: int = 1
 
     def configure(self) -> None:
         self.add_argument(
@@ -51,5 +53,23 @@ class ExonParser(Tap):
             help="Can be used to only perform some steps of the script.",
             dest="steps",
             nargs="*",
-            choices=["all", "extract_only", "build", "method"],
+            choices=["all", "build", "method", "compute"],
+        )
+
+        self.add_argument(
+            "-a",
+            "--nb-activities",
+            help="Number of random activities to select to run computations",
+            dest="nb_activities",
+            default=5,
+            required=False,
+        )
+
+        self.add_argument(
+            "-i",
+            "--nb-indicators",
+            help="Number of random indicators to select to run computations",
+            dest="nb_indicators",
+            default=1,
+            required=False,
         )

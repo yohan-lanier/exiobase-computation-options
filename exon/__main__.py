@@ -1,3 +1,5 @@
+from random import sample
+
 import pandas as pd
 
 from exon.args import ExonParser
@@ -6,6 +8,7 @@ from exon.exiobase import (
     build_exiobase_in_bw,
     extract_exiobase_data,
 )
+from exon.lcia_computations import run_direct_matrix_computation
 from exon.lcia_methods import (
     IWP_EXIOBASE_FILE_MIDDLE,
     IWP_EXIOBASE_FILE_PREFIX,
@@ -23,10 +26,6 @@ if __name__ == "__main__":
     method = LCIA_METHODS[args.method]
     steps = args.steps
     bw_project = args.bw_project_name
-    if "extract_only" in steps or "all" in steps:
-        exiobase_data = extract_exiobase_data(
-            exiobase["version"], exiobase["reference_year"]
-        )
     if "build" in steps or "all" in steps:
         exiobase_data = extract_exiobase_data(
             exiobase["version"], exiobase["reference_year"]
@@ -41,8 +40,10 @@ if __name__ == "__main__":
     if "method" in steps or "all" in steps:
         method["import_in_bw"](bw_project)
 
-    ### SPLIT HERE
     if "compute" in steps or "all" in steps:
+        exiobase_data = extract_exiobase_data(
+            exiobase["version"], exiobase["reference_year"]
+        )
         biosphere_version = get_biosphere_version(
             get_database_biosphere_name("exiobase", bw_project)
         )
@@ -58,4 +59,19 @@ if __name__ == "__main__":
                 + ".xlsx"
             ),
             index_col=0,
+        )
+
+        activities_list = exiobase_data["a"].index.to_list()
+        random_activities = sample(activities_list, int(args.nb_activities))
+        random_activities_index = [
+            activities_list.index(act) for act in random_activities
+        ]
+        random_methods = sample(c_matrix.index.to_list(), int(args.nb_indicators))
+
+        run_direct_matrix_computation(
+            exiobase_data["a"],
+            exiobase_data["s"],
+            c_matrix,
+            random_activities_index,
+            random_methods,
         )
