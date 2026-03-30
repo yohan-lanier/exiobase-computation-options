@@ -4,11 +4,13 @@ from typing import Any, Dict, cast
 import bw2data as bd
 import pandas as pd
 from packaging.version import Version
+from tqdm import tqdm
 
 from exon.lcia_methods.constants import (
     IWP_EXIOBASE_FILE_MIDDLE,
     IWP_EXIOBASE_FILE_PREFIX,
     IWP_NAME,
+    IWP_UNIT_TO_AREA_OF_PROTECTION,
 )
 from exon.paths import LCIA_METHODS
 
@@ -21,10 +23,9 @@ def create_iwp_method_for_exio(version: str) -> None:
 
     assert_method_is_not_already_imported(biosphere_version, method_version=version)
     write_method_to_bw(
-        match_impact_cat_label_to_exio_cf_values(
-            exiobase_biosphere, exio_cfs=cfs["exio_cfs"]
-        ),
+        match_impact_cat_label_to_exio_cf_values(exiobase_biosphere, exio_cfs=cfs),
         exio_version=biosphere_version,
+        method_version=version,
     )
 
 
@@ -57,22 +58,25 @@ def get_biosphere_version(exiobase_biosphere: str) -> str:
 
 
 def load_cfs(method_version: str, biosphere_version: str) -> pd.Series:
-    lcia_exio = pd.read_excel(
-        LCIA_METHODS
-        / IWP_NAME
-        / method_version
-        / (
-            IWP_EXIOBASE_FILE_PREFIX
-            + method_version
-            + IWP_EXIOBASE_FILE_MIDDLE
-            + biosphere_version
-            + ".xlsx"
-        ),
-        index_col=0,
+    lcia_exio = cast(
+        pd.Series,
+        pd.read_excel(
+            LCIA_METHODS
+            / IWP_NAME
+            / method_version
+            / (
+                IWP_EXIOBASE_FILE_PREFIX
+                + method_version
+                + IWP_EXIOBASE_FILE_MIDDLE
+                + biosphere_version
+                + ".xlsx"
+            ),
+            index_col=0,
+        )
+        .stack()
+        .astype(float),
     )
-    lcia_exio = cast(pd.Series, lcia_exio.stack())
-    lcia_exio = lcia_exio[lcia_exio != 0]
-    return lcia_exio.astype(float)
+    return lcia_exio[lcia_exio.iloc[:] != 0]
 
 
 def assert_method_is_not_already_imported(
@@ -100,7 +104,7 @@ def assert_method_is_not_already_imported(
 
 
 def match_impact_cat_label_to_exio_cf_values(
-    exiobase_biosphere: str, exio_cfs: pd.DataFrame
+    exiobase_biosphere: str, exio_cfs: pd.Series
 ) -> Dict[Any, Any]:
     # first match elementary flow names to their id in the bw db
     exio_biosphere_name_to_code_mapping = {
@@ -130,24 +134,25 @@ def match_impact_cat_label_to_exio_cf_values(
 def write_method_to_bw(
     exio_category_name_to_cf_values_dict: Dict[Any, Any],
     exio_version: str,
+    method_version: str,
 ) -> None:
-    breakpoint()
-    # for method in tqdm(ei_cfs, desc="Creating hybrid IWP method"):
-    #     initial_method_name, area_of_protection, impact_cat = method["name"]
-    #     method["name"] = (
-    #         f"exiobase v{exio_version} and ecoinvent".join(
-    #             initial_method_name.split("ecoinvent")
-    #         ),
-    #         area_of_protection,
-    #         impact_cat,
-    #     )
-    #     impact_cat_label = f"{impact_cat} ({method["metadata"]["unit"]})"
-    #     method["data"] += exio_category_name_to_cf_values_dict.get(
-    #         impact_cat_label, []
-    #     )  # note that some impact categories are not present in exiobase (ionizing radiation)
-    #     # default argument from get method safely handles that
-    #     hybrid_method = bd.Method(method["name"])
-    #     hybrid_method.register()
-    #     hybrid_method.metadata["unit"] = method["metadata"]["unit"]
-    #     hybrid_method.write(method["data"])
-    # logging.info("✅ Successfully imported a hybrid version of Impact World+")
+    for indicator, cfs in tqdm(
+        exio_category_name_to_cf_values_dict.items(),
+        desc="Writing impact methods to brightway",
+    ):
+        # indicator names end by unit between bracket
+        # Climate change, ecosystem quality, marine ecosystem, long term (beta) (PDF.m2.yr)
+        unit = indicator.split("(")[-1].strip(")")
+        bw_method = bd.Method(
+            (
+                f"IMPACT World+ v{method_version} for exiobase v{exio_version}",
+                IWP_UNIT_TO_AREA_OF_PROTECTION.get(unit, "Midpoint"),
+                indicator,
+            )
+        )
+        bw_method.register()
+        bw_method.metadata["unit"] = unit
+        bw_method.write(cfs)
+    logging.info(
+        "✅ Successfully imported a hybrid version of Impact World+ v%s", method_version
+    )

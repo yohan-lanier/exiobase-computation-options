@@ -5,4 +5,9 @@ IWP_TOTAL_CAT_TO_UNIT = {
 }
 
 IWP_EXIOBASE_FILE_PREFIX = "impact_world_plus_"
-IWP_EXIOBASE_FILE_MIDDLE = "expert_version_exiobase_"
+IWP_EXIOBASE_FILE_MIDDLE = "_expert_version_exiobase_"
+
+IWP_UNIT_TO_AREA_OF_PROTECTION = {
+    "PDF.m2.yr": "Ecosystem Quality",
+    "DALY": "Human Health",
+}
