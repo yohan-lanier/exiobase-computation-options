@@ -20,7 +20,7 @@ def run_direct_matrix_computation(
     nb_of_activities = len(activities_index)
     nb_of_methods = len(methods)
 
-    logging.info("⚙️ Running manual computation in mode %s", mode)
+    logging.info("⚙️ Running direct matrix computation in mode %s", mode)
     a_matrix_np = exiobase_data["a"].to_numpy()
     s_matrix_np = exiobase_data["s"].to_numpy()
 
@@ -40,10 +40,10 @@ def run_direct_matrix_computation(
             nb_of_activities,
             nb_of_methods,
         )
-        for activity_index in tqdm(activities_index):
+        for activity_index in tqdm(activities_index, desc="Going through activities"):
             y = np.zeros((len(a_matrix_np), 1))
             y[activity_index] = 1
-            for method in methods:
+            for method in tqdm(methods, desc="Going through methods"):
                 c_matrix_filtered = c_matrix.loc[method, :]
                 c_matrix_np = c_matrix_filtered.to_numpy()
                 start = time.time()
@@ -53,7 +53,8 @@ def run_direct_matrix_computation(
                 end = time.time()
                 if verbose:
                     logging.info(
-                        "Manual computation: Time = %s seconds | Score = %s | Activity = %s | Indicator = %s",
+                        "Manual computation: Time = %s seconds | Score = %s | "
+                        "Activity = %s | Indicator = %s",
                         end - start,
                         lca_score,
                         activity_index,
@@ -72,7 +73,7 @@ def run_direct_matrix_computation(
 
     if mode == "aggregated":
         logging.info(
-            "Running all computations at once for %s activities" " and %s methods",
+            "Running all computations at once for %s activities and %s methods",
             nb_of_activities,
             nb_of_methods,
         )

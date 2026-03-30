@@ -21,10 +21,12 @@ def run_bw_computations(
     rtol: float = 1e-6,
 ) -> List[ResultsLogValue]:
     bd.projects.set_current(bw_project)
+    check_all_databases_are_in_bw(exiobase_data, culling_thresholds)
     exiobase_db_base_name = (
         f"{EXIOBASE_NAME}-{exiobase_data["version"]}-{exiobase_data["reference_year"]}"
     )
     results_log: List[ResultsLogValue] = []
+    logging.info("⚙️ Running brightway computation in mode %s", mode)
 
     for culling_threshold in tqdm(
         culling_thresholds,
@@ -35,10 +37,11 @@ def run_bw_computations(
             and mode == "lca_base"
         ):
             logging.warning(
-                "Culling threshold %s is too small for conventional bw lca computation on exiobase. "
-                "Skipping these computations",
+                "Culling threshold %s is too small for conventional bw "
+                "lca computation on exiobase. Skipping these computations",
                 culling_threshold,
             )
+            continue
         exiobase_db_name = exiobase_db_base_name + f"-{culling_threshold}"
         for method in tqdm(methods, desc="Going through methods"):
             bw_method_to_compute = [
@@ -75,7 +78,7 @@ def run_bw_computations(
                     lca = bc.LCA(
                         demand={activity_to_compute: 1}, method=method_to_compute
                     )
-                if mode == "lca_jacobi":
+                elif mode == "lca_jacobi":
                     lca = bc.JacobiGMRESLCA(
                         demand={activity_to_compute: 1},
                         method=method_to_compute,
@@ -105,3 +108,18 @@ def run_bw_computations(
                 )
 
     return results_log
+
+
+def check_all_databases_are_in_bw(
+    exiobase_data: EeioDatabase, culling_thresholds: List[float]
+) -> None:
+    if not all(
+        f"{EXIOBASE_NAME}-{exiobase_data["version"]}-{exiobase_data["reference_year"]}-{culling_threshold}"
+        in bd.databases
+        for culling_threshold in culling_thresholds
+    ):
+        logging.error(
+            "Some input culling threshold do not have corresponding databases"
+            " in bw. Terminating script"
+        )
+        raise NotImplementedError
