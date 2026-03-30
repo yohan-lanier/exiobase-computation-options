@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import TypedDict, cast
+from typing import cast
 
 import pandas as pd
 from packaging.version import Version
@@ -8,13 +8,7 @@ from pymrio import Extension, IOSystem, parse_exiobase3
 
 from exon.exiobase.constants import EURO_UNIT, EXIOBASE_MEURO
 from exon.paths import DATABASES
-
-
-class ExiobaseRelevantData(TypedDict):
-    a: pd.DataFrame
-    s: pd.DataFrame
-    units: pd.DataFrame
-    reference_year: str
+from exon.utils import ExiobaseRelevantData
 
 
 def extract_exiobase_data(version: str, reference_year: str) -> ExiobaseRelevantData:

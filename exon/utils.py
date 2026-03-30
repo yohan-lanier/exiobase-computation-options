@@ -1,6 +1,8 @@
 import logging
+from typing import NotRequired, TypedDict
 
 import bw2data as bd
+import pandas as pd
 from packaging.version import Version
 
 
@@ -31,3 +33,11 @@ def get_biosphere_version(exiobase_biosphere: str) -> str:
     if Version(exiobase_biosphere.split("-")[1]) >= Version("3.9"):
         return "3.9_and_after"
     return "3.8.2_and_before"
+
+
+class ExiobaseRelevantData(TypedDict):
+    a: pd.DataFrame
+    s: pd.DataFrame
+    units: pd.DataFrame
+    reference_year: str
+    c: NotRequired[pd.DataFrame]

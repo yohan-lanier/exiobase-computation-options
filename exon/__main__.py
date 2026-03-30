@@ -60,6 +60,7 @@ if __name__ == "__main__":
             ),
             index_col=0,
         )
+        exiobase_data["c"] = c_matrix
 
         activities_list = exiobase_data["a"].index.to_list()
         random_activities = sample(activities_list, int(args.nb_activities))
@@ -69,9 +70,16 @@ if __name__ == "__main__":
         random_methods = sample(c_matrix.index.to_list(), int(args.nb_indicators))
 
         run_direct_matrix_computation(
-            exiobase_data["a"],
-            exiobase_data["s"],
-            c_matrix,
+            exiobase_data,
+            activities_list,
             random_activities_index,
             random_methods,
+            mode="iterative",
+        )
+        run_direct_matrix_computation(
+            exiobase_data,
+            activities_list,
+            random_activities_index,
+            random_methods,
+            mode="aggregated",
         )

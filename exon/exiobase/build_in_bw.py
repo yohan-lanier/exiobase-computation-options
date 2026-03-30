@@ -15,7 +15,7 @@ from exon.exiobase.constants import (
     EURO_UNIT,
     EXIOBASE_NAME,
 )
-from exon.exiobase.extract import ExiobaseRelevantData
+from exon.utils import ExiobaseRelevantData
 
 
 def build_exiobase_in_bw(
