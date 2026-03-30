@@ -19,5 +19,5 @@ exclude = ["data"]
 dependencies = {file = ["requirements.txt"]}
 
 [[tool.mypy.overrides]]
-module = ["bw2data.*", "pymrio.*"]
+module = ["bw2data.*", "bw2calc.*", "pymrio.*"]
 ignore_missing_imports = true

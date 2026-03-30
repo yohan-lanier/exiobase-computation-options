@@ -11,7 +11,7 @@ from exon.utils import ExiobaseRelevantData, ResultsLogValue
 
 def run_direct_matrix_computation(
     exiobase_data: ExiobaseRelevantData,
-    activities: List[Tuple[str, str]],
+    all_activities: List[Tuple[str, str]],
     activities_index: List[int],
     methods: List[str],
     mode: Literal["iterative"] | Literal["aggregated"] = "aggregated",
@@ -62,7 +62,7 @@ def run_direct_matrix_computation(
                 results_log.append(
                     {
                         "computation_type": "matrix_iterative",
-                        "activity": str(activities[activity_index]),
+                        "activity": str(all_activities[activity_index]),
                         "method": method,
                         "computation_time": end - start,
                         "score": lca_score,
@@ -73,7 +73,7 @@ def run_direct_matrix_computation(
     if mode == "aggregated":
         logging.info(
             "Running all computations at once for %s activities" " and %s methods",
-            len(activities),
+            nb_of_activities,
             nb_of_methods,
         )
         Y = np.zeros((len(a_matrix_np), nb_of_activities))
@@ -90,14 +90,14 @@ def run_direct_matrix_computation(
                 pd.DataFrame(
                     lca_scores,
                     index=methods,
-                    columns=[activities[i] for i in activities_index],
+                    columns=[all_activities[i] for i in activities_index],
                 )
             )
         nb_of_computed_scores = nb_of_activities * nb_of_methods
         return [
             {
                 "computation_type": "matrix_aggregated",
-                "activity": str(activities[act_index]),
+                "activity": str(all_activities[act_index]),
                 "method": method,
                 "computation_time": (end - start) / nb_of_computed_scores,
                 "score": lca_scores[j][i],

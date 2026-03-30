@@ -52,4 +52,13 @@ class ResultsLogValue(TypedDict):
     score: float
     computation_time: float
     db_name: NotRequired[str]
-    culling_threshold: NotRequired[str]
+    culling_threshold: NotRequired[float]
+
+
+EXIOBASE_NAME = "exiobase"
+
+
+class EeioDatabase(TypedDict):
+    name: str
+    version: str
+    reference_year: str

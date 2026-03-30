@@ -13,9 +13,8 @@ from exon.exiobase.constants import (
     BW_PROCESS_TYPE,
     CONDITIONS_FOR_EXIOBASE_BIOSPHERE,
     EURO_UNIT,
-    EXIOBASE_NAME,
 )
-from exon.utils import ExiobaseRelevantData
+from exon.utils import EXIOBASE_NAME, ExiobaseRelevantData
 
 
 def build_exiobase_in_bw(

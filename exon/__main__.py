@@ -10,7 +10,7 @@ from exon.exiobase import (
     build_exiobase_in_bw,
     extract_exiobase_data,
 )
-from exon.lcia_computations import run_direct_matrix_computation
+from exon.lcia_computations import run_bw_computations, run_direct_matrix_computation
 from exon.lcia_methods import (
     IWP_EXIOBASE_FILE_MIDDLE,
     IWP_EXIOBASE_FILE_PREFIX,
@@ -91,6 +91,29 @@ if __name__ == "__main__":
                 random_activities_index,
                 random_methods,
                 mode="aggregated",
+            )
+        )
+
+        results_log.extend(
+            run_bw_computations(
+                exiobase,
+                args.culling_thresholds,
+                random_activities,
+                random_methods,
+                bw_project,
+                mode="lca_jacobi",
+                rtol=1e-6,
+            )
+        )
+
+        results_log.extend(
+            run_bw_computations(
+                exiobase,
+                args.culling_thresholds,
+                random_activities,
+                random_methods,
+                bw_project,
+                mode="lca_base",
             )
         )
 

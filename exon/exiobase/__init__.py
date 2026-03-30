@@ -1,14 +1,8 @@
-from typing import Callable, Dict, TypedDict, cast
+from typing import Callable, Dict
 
 from exon.exiobase.build_in_bw import build_exiobase_in_bw
 from exon.exiobase.extract import extract_exiobase_data
-
-
-class EeioDatabase(TypedDict):
-    name: str
-    version: str
-    reference_year: str
-
+from exon.utils import EeioDatabase
 
 EXIOBASE_DATABASES: Dict[str, EeioDatabase] = {
     **{
