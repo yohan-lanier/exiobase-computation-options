@@ -28,7 +28,11 @@ from exon.utils import (
 
 if __name__ == "__main__":
     configure_logger()
-    args = ExonParser(description="""TO WRITE""").parse_args()
+    args = ExonParser(
+        description="""A python pipeline importing exiobase to brightway for different
+        culling trehshold values and running lca computations for different computation
+        modes. Output present results and computation times in a .csv file"""
+    ).parse_args()
     exiobase = EXIOBASE_DATABASES[args.database]
     method = LCIA_METHODS[args.method]
     steps = args.steps
