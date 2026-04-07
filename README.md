@@ -27,8 +27,8 @@ python exon -p exon -d exiobase-3.8.2-2022 -m iwp-2.2.1 -t 1e-3 1e-7 -s all -i 5
 ```
 
 The above command will extract the exiobase 3.8.2 2022 data, build two databases in brightway (one by applying a culling threshold of 1e-3 and a second one applying a culling threshold of 1e-7), import Impact World+ v2.2.1 to brightway, and run computation on 5 randomly selected impact indicators for 10 randomly selected activities. By default, computations will be run for different computation modes:
-1) direct matrix iterative -> for each tupple `(indicator, activity)`, the code solves $C.S.((I-A)^-1).y$ for a single method in $C$ (the characterization matrix, or vector here) and single activity in $y$ (the demand vector)
-2) direct matrix aggregated -> this mode solves $C.S.((I-A)^-1).Y$ where all selected methods are in $C$ and $Y$ is a demand matrix containing as many columns as selected activities. Computation time is divided by the number of tupples `(indicator, activity)`
+1) direct matrix iterative -> for each tupple `(indicator, activity)`, the code solves $C.S.((I-A)^{-1}).y$ for a single method in $C$ (the characterization matrix, or vector here) and single activity in $y$ (the demand vector)
+2) direct matrix aggregated -> this mode solves $C.S.((I-A)^{-1}).Y$ where all selected methods are in $C$ and $Y$ is a demand matrix containing as many columns as selected activities. Computation time is divided by the number of tupples `(indicator, activity)`
 3) classic `bw2calc.LCA` object
 4) new `bw2calc.JacobiGMRESLCA` object
 
