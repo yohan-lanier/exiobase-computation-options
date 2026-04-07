@@ -1,3 +1,4 @@
+import logging
 from random import sample
 from time import strftime
 from typing import List
@@ -71,6 +72,14 @@ if __name__ == "__main__":
             ),
             index_col=0,
         )
+        nb_indicators = c_matrix.shape[0]
+        # drop all categories for which all cfs are null
+        c_matrix = c_matrix.loc[~(c_matrix == 0).all(axis=1)]
+        if c_matrix.shape[0] < nb_indicators:
+            logging.warning(
+                "Dropping %i impact indicators because all cfs are null.",
+                (nb_indicators - c_matrix.shape[0]),
+            )
         exiobase_data["c"] = c_matrix
         activities_list = exiobase_data["a"].index.to_list()
         random_activities = sample(activities_list, int(args.nb_activities))

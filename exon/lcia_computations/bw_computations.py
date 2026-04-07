@@ -50,8 +50,8 @@ def run_bw_computations(
                 )
             ]
             assert len(bw_method_to_compute) == 1, (
-                "More than one method found for 1 method header ",
-                "This is not normal",
+                "More or less than exactly one method found",
+                f" for method header {method}. This is not normal",
             )
             method_to_compute = bw_method_to_compute[0]
             for activity in tqdm(
