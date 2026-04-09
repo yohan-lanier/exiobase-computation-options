@@ -20,8 +20,13 @@ def create_iwp_method_for_exio(version: str, bw_project: str) -> None:
     exiobase_biosphere = get_database_biosphere_name("exiobase", bw_project)
     biosphere_version = get_biosphere_version(exiobase_biosphere)
     # cfs: characterization factors
-    cfs = load_cfs(method_version=version, biosphere_version=biosphere_version)
-
+    cfs = cast(
+        pd.Series,
+        load_cfs(method_version=version, biosphere_version=biosphere_version)
+        .stack()
+        .astype(float),
+    )
+    cfs = cfs[cfs.iloc[:] != 0]  # drop null cfs
     assert_method_is_not_already_imported(biosphere_version, method_version=version)
     write_method_to_bw(
         match_impact_cat_label_to_exio_cf_values(exiobase_biosphere, exio_cfs=cfs),
@@ -30,26 +35,21 @@ def create_iwp_method_for_exio(version: str, bw_project: str) -> None:
     )
 
 
-def load_cfs(method_version: str, biosphere_version: str) -> pd.Series:
-    lcia_exio = cast(
-        pd.Series,
-        pd.read_excel(
-            LCIA_METHODS_PATH
-            / IWP_NAME
-            / method_version
-            / (
-                IWP_EXIOBASE_FILE_PREFIX
-                + method_version
-                + IWP_EXIOBASE_FILE_MIDDLE
-                + biosphere_version
-                + ".xlsx"
-            ),
-            index_col=0,
-        )
-        .stack()
-        .astype(float),
+def load_cfs(method_version: str, biosphere_version: str) -> pd.DataFrame:
+    lcia_exio = pd.read_excel(
+        LCIA_METHODS_PATH
+        / IWP_NAME
+        / method_version
+        / (
+            IWP_EXIOBASE_FILE_PREFIX
+            + method_version
+            + IWP_EXIOBASE_FILE_MIDDLE
+            + biosphere_version
+            + ".xlsx"
+        ),
+        index_col=0,
     )
-    return lcia_exio[lcia_exio.iloc[:] != 0]
+    return lcia_exio
 
 
 def assert_method_is_not_already_imported(

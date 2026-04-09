@@ -12,14 +12,9 @@ from exon.exiobase import (
     extract_exiobase_data,
 )
 from exon.lcia_computations import run_bw_computations, run_direct_matrix_computation
-from exon.lcia_methods import (
-    IWP_EXIOBASE_FILE_MIDDLE,
-    IWP_EXIOBASE_FILE_PREFIX,
-    IWP_NAME,
-    LCIA_METHODS,
-)
+from exon.lcia_methods import LCIA_METHODS
 from exon.logger import configure_logger
-from exon.paths import DATA, LCIA_METHODS_PATH
+from exon.paths import DATA
 from exon.utils import (
     MIN_VALUE_CULLING_FOR_LCA_BASE_COMP,
     ResultsLogValue,
@@ -59,19 +54,7 @@ if __name__ == "__main__":
         BIOSPHERE_VERSION = get_biosphere_version(
             get_database_biosphere_name("exiobase", bw_project)
         )
-        c_matrix = pd.read_excel(
-            LCIA_METHODS_PATH
-            / IWP_NAME
-            / method["method_version"]
-            / (
-                IWP_EXIOBASE_FILE_PREFIX
-                + method["method_version"]
-                + IWP_EXIOBASE_FILE_MIDDLE
-                + BIOSPHERE_VERSION
-                + ".xlsx"
-            ),
-            index_col=0,
-        )
+        c_matrix = method["extract_cfs"](BIOSPHERE_VERSION)
         nb_indicators = c_matrix.shape[0]
         # drop all categories for which all cfs are null
         c_matrix = c_matrix.loc[~(c_matrix == 0).all(axis=1)]

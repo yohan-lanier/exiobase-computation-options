@@ -1,24 +1,33 @@
-from typing import Callable, TypedDict, cast
+from typing import Callable, Dict, TypedDict, cast
+
+import pandas as pd
 
 from exon.lcia_methods.constants import (
     IWP_EXIOBASE_FILE_MIDDLE,
     IWP_EXIOBASE_FILE_PREFIX,
     IWP_NAME,
 )
-from exon.lcia_methods.iwp import create_iwp_method_for_exio
+from exon.lcia_methods.iwp import create_iwp_method_for_exio, load_cfs
 
 
 class LciaMethod(TypedDict):
     name: str
     method_version: str
+    extract_cfs: Callable[[str], pd.DataFrame]
     import_in_bw: Callable[[str], None]
 
 
-LCIA_METHODS: dict[str, LciaMethod] = {
+LCIA_METHODS: Dict[str, LciaMethod] = {
     **{
         f"{IWP_NAME}-{version}": {
             "name": IWP_NAME,
             "method_version": version,
+            "extract_cfs": cast(
+                Callable[[str], pd.DataFrame],
+                lambda biosphere_version, method_version=version: load_cfs(
+                    method_version, biosphere_version
+                ),
+            ),
             "import_in_bw": cast(
                 Callable[[str], None],
                 lambda bw_project, version=version: create_iwp_method_for_exio(
