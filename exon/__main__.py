@@ -51,7 +51,7 @@ if __name__ == "__main__":
         )
         exiobase_data["c"] = extrat_cfs_for_method_and_drop_null_cfs(bw_project, method)
         lists_for_computations = generate_random_samples_for_computations(
-            exiobase_data, args
+            exiobase_data, args.nb_activities, args.nb_indicators
         )
         all_activities, random_activities, random_activities_index, random_methods = (
             lists_for_computations["all_activities"],

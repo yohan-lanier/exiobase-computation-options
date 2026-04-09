@@ -6,8 +6,6 @@ import bw2data as bd
 import pandas as pd
 from packaging.version import Version
 
-from exon.args import ExonParser
-
 
 def get_database_biosphere_name(db_name: str, bw_project: str) -> str:
     bd.projects.set_current(bw_project)
@@ -103,10 +101,10 @@ class ListsForComputations(TypedDict):
 
 
 def generate_random_samples_for_computations(
-    exiobase_data: ExiobaseRelevantData, args: ExonParser
+    exiobase_data: ExiobaseRelevantData, nb_activities: int, nb_indicators: int
 ) -> ListsForComputations:
     activities_list = exiobase_data["a"].index.to_list()
-    random_activities = sample(activities_list, int(args.nb_activities))
+    random_activities = sample(activities_list, int(nb_activities))
     random_activities_index = [activities_list.index(act) for act in random_activities]
     c_matrix = exiobase_data.get("c")
     if c_matrix is None:
@@ -114,7 +112,7 @@ def generate_random_samples_for_computations(
             "No c matrix found in exiobase data, cannot sample random methods for computations"
         )
         raise NotImplementedError
-    random_methods = sample(c_matrix.index.to_list(), int(args.nb_indicators))
+    random_methods = sample(c_matrix.index.to_list(), int(nb_indicators))
     return {
         "all_activities": activities_list,
         "random_activities": random_activities,
