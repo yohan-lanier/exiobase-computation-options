@@ -70,6 +70,7 @@ if __name__ == "__main__":
                 mode="iterative",
             )
         )
+
         results_log.extend(
             run_direct_matrix_computation(
                 exiobase_data,
@@ -100,6 +101,18 @@ if __name__ == "__main__":
                 random_methods,
                 bw_project,
                 mode="lca_base",
+                min_value_culling_lca_base=MIN_VALUE_CULLING_FOR_LCA_BASE_COMP,
+            )
+        )
+
+        results_log.extend(
+            run_bw_computations(
+                exiobase,
+                args.culling_thresholds,
+                random_activities,
+                random_methods,
+                bw_project,
+                mode="multi_lca_base",
                 min_value_culling_lca_base=MIN_VALUE_CULLING_FOR_LCA_BASE_COMP,
             )
         )

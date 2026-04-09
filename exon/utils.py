@@ -46,7 +46,11 @@ class ExiobaseRelevantData(TypedDict):
 
 class ResultsLogValue(TypedDict):
     computation_type: Literal[
-        "matrix_iterative", "matrix_aggregated", "lca_base", "lca_jacobi"
+        "matrix_iterative",
+        "matrix_aggregated",
+        "lca_base",
+        "lca_jacobi",
+        "multi_lca_base",
     ]
     activity: str
     method: str
