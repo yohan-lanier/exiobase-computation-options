@@ -107,8 +107,25 @@ class ListsForComputations(TypedDict):
 def generate_random_samples_for_computations(
     exiobase_data: ExiobaseRelevantData, nb_activities: int, nb_indicators: int
 ) -> ListsForComputations:
-    activities_list = exiobase_data["a"].index.to_list()
-    random_activities = sample(activities_list, int(nb_activities))
+    a_matrix = exiobase_data["a"]
+    activities_list = a_matrix.index.to_list()
+    # make sure that selected activities have exchanges
+    # to avoid null results in computations
+    valid_activities = [
+        act for i, act in enumerate(activities_list) if (a_matrix.iloc[:, i] != 0).any()
+    ]
+
+    if len(valid_activities) < nb_activities:
+        logging.error(
+            "Not enough activities with non-zero exchanges: found %i, need %i",
+            len(valid_activities),
+            nb_activities,
+        )
+        raise ValueError(
+            f"Cannot find enough activities with non-zero exchanges. "
+            f"Found {len(valid_activities)}, need {nb_activities}"
+        )
+    random_activities = sample(valid_activities, int(nb_activities))
     random_activities_index = [activities_list.index(act) for act in random_activities]
     c_matrix = exiobase_data.get("c")
     if c_matrix is None:
