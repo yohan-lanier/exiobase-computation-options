@@ -1,4 +1,4 @@
-from typing import Callable, Dict
+from typing import Dict
 
 from exon.exiobase.build_in_bw import build_exiobase_in_bw
 from exon.exiobase.extract import extract_exiobase_data
@@ -19,4 +19,9 @@ EXIOBASE_DATABASES: Dict[str, EeioDatabase] = {
 VALID_DATABASES = list(EXIOBASE_DATABASES.keys())
 
 
-__all__ = ["EXIOBASE_DATABASES", "extract_exiobase_data", "VALID_DATABASES"]
+__all__ = [
+    "build_exiobase_in_bw",
+    "EXIOBASE_DATABASES",
+    "extract_exiobase_data",
+    "VALID_DATABASES",
+]

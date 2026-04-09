@@ -1,5 +1,3 @@
-import logging
-from random import sample
 from time import strftime
 from typing import List
 
@@ -18,8 +16,8 @@ from exon.paths import DATA
 from exon.utils import (
     MIN_VALUE_CULLING_FOR_LCA_BASE_COMP,
     ResultsLogValue,
-    get_biosphere_version,
-    get_database_biosphere_name,
+    extrat_cfs_for_method_and_drop_null_cfs,
+    generate_random_samples_for_computations,
 )
 
 if __name__ == "__main__":
@@ -51,31 +49,22 @@ if __name__ == "__main__":
         exiobase_data = extract_exiobase_data(
             exiobase["version"], exiobase["reference_year"]
         )
-        BIOSPHERE_VERSION = get_biosphere_version(
-            get_database_biosphere_name("exiobase", bw_project)
+        exiobase_data["c"] = extrat_cfs_for_method_and_drop_null_cfs(bw_project, method)
+        lists_for_computations = generate_random_samples_for_computations(
+            exiobase_data, args
         )
-        c_matrix = method["extract_cfs"](BIOSPHERE_VERSION)
-        nb_indicators = c_matrix.shape[0]
-        # drop all categories for which all cfs are null
-        c_matrix = c_matrix.loc[~(c_matrix == 0).all(axis=1)]
-        if c_matrix.shape[0] < nb_indicators:
-            logging.warning(
-                "Dropping %i impact indicators because all cfs are null.",
-                (nb_indicators - c_matrix.shape[0]),
-            )
-        exiobase_data["c"] = c_matrix
-        activities_list = exiobase_data["a"].index.to_list()
-        random_activities = sample(activities_list, int(args.nb_activities))
-        random_activities_index = [
-            activities_list.index(act) for act in random_activities
-        ]
-        random_methods = sample(c_matrix.index.to_list(), int(args.nb_indicators))
+        all_activities, random_activities, random_activities_index, random_methods = (
+            lists_for_computations["all_activities"],
+            lists_for_computations["random_activities"],
+            lists_for_computations["random_activities_index"],
+            lists_for_computations["random_methods"],
+        )
         results_log: List[ResultsLogValue] = []
 
         results_log.extend(
             run_direct_matrix_computation(
                 exiobase_data,
-                activities_list,
+                all_activities,
                 random_activities_index,
                 random_methods,
                 mode="iterative",
@@ -84,7 +73,7 @@ if __name__ == "__main__":
         results_log.extend(
             run_direct_matrix_computation(
                 exiobase_data,
-                activities_list,
+                all_activities,
                 random_activities_index,
                 random_methods,
                 mode="aggregated",

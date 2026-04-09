@@ -8,14 +8,7 @@ from exon.lcia_methods.constants import (
     IWP_NAME,
 )
 from exon.lcia_methods.iwp import create_iwp_method_for_exio, load_cfs
-
-
-class LciaMethod(TypedDict):
-    name: str
-    method_version: str
-    extract_cfs: Callable[[str], pd.DataFrame]
-    import_in_bw: Callable[[str], None]
-
+from exon.utils import LciaMethod
 
 LCIA_METHODS: Dict[str, LciaMethod] = {
     **{
