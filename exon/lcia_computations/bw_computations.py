@@ -44,44 +44,21 @@ def run_bw_computations(
         bw_activities = get_bw_activities(activities_to_compute, exiobase_db_name)
         if mode == "multi_lca_base":
             results_log.extend(
-                run_multi_lca_computation(bw_activities, bw_methods, exiobase_db_name)
+                run_multi_lca_computation(
+                    bw_activities, bw_methods, exiobase_db_name, culling_threshold
+                )
             )
         else:
-            for method in tqdm(bw_methods.values(), desc="Going through methods"):
-                for activity in tqdm(
-                    bw_activities.values(), desc="Going through activities"
-                ):
-                    if mode == "lca_base":
-                        lca = bc.LCA(demand={activity: 1}, method=method)
-                    elif mode == "lca_jacobi":
-                        lca = bc.JacobiGMRESLCA(
-                            demand={activity: 1},
-                            method=method,
-                            rtol=rtol,
-                        )
-                    else:
-                        logging.error(
-                            "Computation mode %s is unknown and not supported, terminating script.",
-                            mode,
-                        )
-                        raise NotImplementedError
-                    start = time.time()
-                    lca.lci()
-                    lca.lcia()
-                    end = time.time()
-
-                    results_log.append(
-                        {
-                            "computation_type": mode,
-                            "activity": str(activity),
-                            "method": method,
-                            "score": lca.score,
-                            "computation_time": end - start,
-                            "db_name": exiobase_db_name,
-                            "culling_threshold": culling_threshold,
-                        }
-                    )
-
+            results_log.extend(
+                run_iterative_lca_computations(
+                    bw_activities,
+                    bw_methods,
+                    exiobase_db_name,
+                    culling_threshold,
+                    mode,
+                    rtol,
+                )
+            )
     return results_log
 
 
@@ -144,10 +121,11 @@ def run_multi_lca_computation(
     bw_activities: Dict[Tuple[str, str], Any],
     bw_methods: Dict[str, Any],
     exiobase_db_name: str,
+    culling_threshold: float,
 ) -> List[ResultsLogValue]:
     results_log: List[ResultsLogValue] = []
     functional_units = {
-        f"('{activity["name"]}', '{activity["location"]}')": {int(activity["id"]): 1.0}
+        f"('{activity["location"]}', '{activity["name"]}')": {int(activity["id"]): 1.0}
         for activity in bw_activities.values()
     }
     method_config = {"impact_categories": list(bw_methods.values())}
@@ -176,6 +154,53 @@ def run_multi_lca_computation(
                 "score": score,
                 "computation_time": (end - start) / nb_of_computations,
                 "db_name": exiobase_db_name,
+                "culling_threshold": culling_threshold,
             }
         )
+    return results_log
+
+
+def run_iterative_lca_computations(
+    bw_activities: Dict[Tuple[str, str], Any],
+    bw_methods: Dict[str, Any],
+    exiobase_db_name: str,
+    culling_threshold: float,
+    mode: Literal["lca_base", "lca_jacobi"],
+    rtol: float = 1e-6,
+) -> List[ResultsLogValue]:
+    results_log: List[ResultsLogValue] = []
+    for method in tqdm(bw_methods.values(), desc="Going through methods"):
+        for activity in tqdm(bw_activities.values(), desc="Going through activities"):
+            if mode == "lca_base":
+                lca = bc.LCA(demand={activity: 1}, method=method)
+            elif mode == "lca_jacobi":
+                lca = bc.JacobiGMRESLCA(
+                    demand={activity: 1},
+                    method=method,
+                    rtol=rtol,
+                )
+            else:
+                logging.error(
+                    "Computation mode %s is unknown and not supported, terminating script.",
+                    mode,
+                )
+                raise NotImplementedError
+            start = time.time()
+            lca.lci()
+            lca.lcia()
+            end = time.time()
+
+            results_log.append(
+                {
+                    "computation_type": mode,
+                    "activity": f"('{activity["location"]}', '{activity["name"]}')",
+                    "method": list(bw_methods.keys())[
+                        list(bw_methods.values()).index(method)
+                    ],
+                    "score": lca.score,
+                    "computation_time": end - start,
+                    "db_name": exiobase_db_name,
+                    "culling_threshold": culling_threshold,
+                }
+            )
     return results_log
