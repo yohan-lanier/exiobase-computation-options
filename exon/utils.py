@@ -115,7 +115,7 @@ def generate_random_samples_for_computations(
         act for i, act in enumerate(activities_list) if (a_matrix.iloc[:, i] != 0).any()
     ]
 
-    if len(valid_activities) < nb_activities:
+    if len(valid_activities) < int(nb_activities):
         logging.error(
             "Not enough activities with non-zero exchanges: found %i, need %i",
             len(valid_activities),
