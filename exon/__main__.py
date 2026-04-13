@@ -88,7 +88,7 @@ if __name__ == "__main__":
                 random_activities,
                 random_methods,
                 bw_project,
-                mode="lca_jacobi",
+                mode="lca_jacobi_cold",
                 rtol=1e-6,
             )
         )
@@ -100,7 +100,19 @@ if __name__ == "__main__":
                 random_activities,
                 random_methods,
                 bw_project,
-                mode="lca_base",
+                mode="lca_jacobi_warm",
+                rtol=1e-6,
+            )
+        )
+
+        results_log.extend(
+            run_bw_computations(
+                exiobase,
+                args.culling_thresholds,
+                random_activities,
+                random_methods,
+                bw_project,
+                mode="lca_factorized",
                 min_value_culling_lca_base=MIN_VALUE_CULLING_FOR_LCA_BASE_COMP,
             )
         )
@@ -118,6 +130,8 @@ if __name__ == "__main__":
         )
 
         # change to use built-in csv module later
+        output_dir = DATA / "output"
+        output_dir.mkdir(parents=True, exist_ok=True)
         pd.DataFrame.from_records(results_log).to_csv(
-            DATA / "output" / f"{strftime("%Y%m%d-%H%M%S")}-results_log.csv"
+            output_dir / f"{strftime('%Y%m%d-%H%M%S')}-results_log.csv"
         )
