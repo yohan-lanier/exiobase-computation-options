@@ -269,11 +269,11 @@ def run_reused_solver_lca_computations(
             if i == 0:
                 lca.lci(factorize=True)
             else:
-                lca.lci(demand={activity: 1})
+                lca.lci(demand={activity.id: 1})
         elif i == 0:
             lca.lci()
         else:
-            lca.lci(demand={activity: 1})
+            lca.lci(demand={activity.id: 1})
         end = perf_counter()
         lci_share = (end - start) / nb_methods
 
