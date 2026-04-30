@@ -1,6 +1,6 @@
 # EXiobase-cOmputation-optioNs
 
-A set of python method buildind exiobase as an IOTableBackend in `brightway` and comparing different impacts computations options: 1) direct computations with numpy matrices 2) computations using the regular LCA object from`bw2calc` 3) computions using the `JacobiGMRESLCA` object introduced in `bw2calc v2.4.0`.
+A set of python method buildind exiobase as an IOTableBackend in `brightway` and comparing different impacts computations options: 1) direct computations with numpy matrices 2) computations using the regular LCA object from`bw2calc` with technosphere factorization reuse 3) computions using the `JacobiGMRESLCA` object introduced in `bw2calc v2.4.0`, with and without warm-start guesses.
 
 ## Get started
 
@@ -31,8 +31,10 @@ python exon -p exon -d exiobase-3.8.2-2022 -m iwp-2.2.1 -t 1e-3 1e-7 -s all -i 5
 The above command will extract the exiobase 3.8.2 2022 data, build two databases in brightway (one by applying a culling threshold of 1e-3 and a second one applying a culling threshold of 1e-7), import Impact World+ v2.2.1 to brightway, and run computation on 5 randomly selected impact indicators for 10 randomly selected activities. By default, computations will be run for different computation modes:
 1) direct matrix iterative -> for each tupple `(indicator, activity)`, the code solves $C.S.((I-A)^{-1}).y$ for a single method in $C$ (the characterization matrix, or vector here) and single activity in $y$ (the demand vector)
 2) direct matrix aggregated -> this mode solves $C.S.((I-A)^{-1}).Y$ where all selected methods are in $C$ and $Y$ is a demand matrix containing as many columns as selected activities. Computation time is divided by the number of tupples `(indicator, activity)`
-3) classic `bw2calc.LCA` object
-4) new `bw2calc.JacobiGMRESLCA` object
+3) `bw2calc.LCA` with reused technosphere factorization and `switch_method()` for repeated LCIA on the same inventory
+4) `bw2calc.JacobiGMRESLCA` with `use_guess=False` to benchmark cold starts across repeated right-hand sides
+5) `bw2calc.JacobiGMRESLCA` with `use_guess=True` to benchmark warm-start reuse across repeated right-hand sides
+6) `bw2calc.MultiLCA`
 
 Get more info about available args by running:
 ```pwsh

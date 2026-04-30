@@ -50,6 +50,9 @@ class ResultsLogValue(TypedDict):
         "matrix_aggregated",
         "lca_base",
         "lca_jacobi",
+        "lca_factorized",
+        "lca_jacobi_cold",
+        "lca_jacobi_warm",
         "multi_lca_base",
     ]
     activity: str
