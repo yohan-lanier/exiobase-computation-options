@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from exon.utils import ExiobaseRelevantData, ResultsLogValue
+from exopt.utils import ExiobaseRelevantData, ResultsLogValue
 
 
 def run_direct_matrix_computation(

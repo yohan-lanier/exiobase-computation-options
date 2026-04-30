@@ -2,13 +2,13 @@ from typing import Callable, Dict, TypedDict, cast
 
 import pandas as pd
 
-from exon.lcia_methods.constants import (
+from exopt.lcia_methods.constants import (
     IWP_EXIOBASE_FILE_MIDDLE,
     IWP_EXIOBASE_FILE_PREFIX,
     IWP_NAME,
 )
-from exon.lcia_methods.iwp import create_iwp_method_for_exio, load_cfs
-from exon.utils import LciaMethod
+from exopt.lcia_methods.iwp import create_iwp_method_for_exio, load_cfs
+from exopt.utils import LciaMethod
 
 LCIA_METHODS: Dict[str, LciaMethod] = {
     **{

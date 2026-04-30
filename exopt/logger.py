@@ -19,7 +19,7 @@ BOLD_RED = "\x1b[1;31m"
 BLUE = "\x1b[38;5;86m"
 
 
-class ExonFormatter(logging.Formatter):
+class ExoptFormatter(logging.Formatter):
 
     message_format = "%(asctime)s - %(levelname)s - %(message)s"
     FORMATS = {
@@ -41,6 +41,6 @@ def configure_logger() -> None:
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()
-    ch.setFormatter(ExonFormatter())
+    ch.setFormatter(ExoptFormatter())
     ch.setLevel(logging.INFO)
     logger.addHandler(ch)

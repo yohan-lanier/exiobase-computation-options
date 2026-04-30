@@ -3,17 +3,17 @@ from typing import List
 
 import pandas as pd
 
-from exon.args import ExonParser
-from exon.exiobase import (
+from exopt.args import ExoptParser
+from exopt.exiobase import (
     EXIOBASE_DATABASES,
     build_exiobase_in_bw,
     extract_exiobase_data,
 )
-from exon.lcia_computations import run_bw_computations, run_direct_matrix_computation
-from exon.lcia_methods import LCIA_METHODS
-from exon.logger import configure_logger
-from exon.paths import DATA
-from exon.utils import (
+from exopt.lcia_computations import run_bw_computations, run_direct_matrix_computation
+from exopt.lcia_methods import LCIA_METHODS
+from exopt.logger import configure_logger
+from exopt.paths import DATA
+from exopt.utils import (
     MIN_VALUE_CULLING_FOR_LCA_BASE_COMP,
     ResultsLogValue,
     extrat_cfs_for_method_and_drop_null_cfs,
@@ -22,7 +22,7 @@ from exon.utils import (
 
 if __name__ == "__main__":
     configure_logger()
-    args = ExonParser(
+    args = ExoptParser(
         description="""A python pipeline importing exiobase to brightway for different
         culling trehshold values and running lca computations for different computation
         modes. Output present results and computation times in a .csv file"""

@@ -6,9 +6,9 @@ import pandas as pd
 from packaging.version import Version
 from pymrio import Extension, IOSystem, parse_exiobase3
 
-from exon.exiobase.constants import EURO_UNIT, EXIOBASE_MEURO
-from exon.paths import DATABASES
-from exon.utils import ExiobaseRelevantData
+from exopt.exiobase.constants import EURO_UNIT, EXIOBASE_MEURO
+from exopt.paths import DATABASES
+from exopt.utils import ExiobaseRelevantData
 
 
 def extract_exiobase_data(version: str, reference_year: str) -> ExiobaseRelevantData:

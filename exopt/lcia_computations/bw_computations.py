@@ -6,7 +6,7 @@ import bw2calc as bc
 import bw2data as bd
 from tqdm import tqdm
 
-from exon.utils import EXIOBASE_NAME, EeioDatabase, ResultsLogValue
+from exopt.utils import EXIOBASE_NAME, EeioDatabase, ResultsLogValue
 
 BwComputationMode = Literal[
     "lca_base",

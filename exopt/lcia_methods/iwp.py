@@ -5,14 +5,14 @@ import bw2data as bd
 import pandas as pd
 from tqdm import tqdm
 
-from exon.lcia_methods.constants import (
+from exopt.lcia_methods.constants import (
     IWP_EXIOBASE_FILE_MIDDLE,
     IWP_EXIOBASE_FILE_PREFIX,
     IWP_NAME,
     IWP_UNIT_TO_AREA_OF_PROTECTION,
 )
-from exon.paths import LCIA_METHODS_PATH
-from exon.utils import get_biosphere_version, get_database_biosphere_name
+from exopt.paths import LCIA_METHODS_PATH
+from exopt.utils import get_biosphere_version, get_database_biosphere_name
 
 
 def create_iwp_method_for_exio(version: str, bw_project: str) -> None:

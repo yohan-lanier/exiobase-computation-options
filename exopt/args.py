@@ -1,9 +1,9 @@
 from tap import Tap
 
-from exon.exiobase import VALID_DATABASES
+from exopt.exiobase import VALID_DATABASES
 
 
-class ExonParser(Tap):
+class ExoptParser(Tap):
     bw_project_name: str
     database: str
     method: str

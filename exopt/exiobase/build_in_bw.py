@@ -9,12 +9,12 @@ from bw2data.backends.iotable import IOTableBackend
 from packaging.version import Version
 from tqdm import tqdm
 
-from exon.exiobase.constants import (
+from exopt.exiobase.constants import (
     BW_PROCESS_TYPE,
     CONDITIONS_FOR_EXIOBASE_BIOSPHERE,
     EURO_UNIT,
 )
-from exon.utils import EXIOBASE_NAME, ExiobaseRelevantData
+from exopt.utils import EXIOBASE_NAME, ExiobaseRelevantData
 
 
 def build_exiobase_in_bw(

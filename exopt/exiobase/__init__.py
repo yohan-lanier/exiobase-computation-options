@@ -1,8 +1,8 @@
 from typing import Dict
 
-from exon.exiobase.build_in_bw import build_exiobase_in_bw
-from exon.exiobase.extract import extract_exiobase_data
-from exon.utils import EeioDatabase
+from exopt.exiobase.build_in_bw import build_exiobase_in_bw
+from exopt.exiobase.extract import extract_exiobase_data
+from exopt.utils import EeioDatabase
 
 EXIOBASE_DATABASES: Dict[str, EeioDatabase] = {
     **{
